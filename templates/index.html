@@ -9,4 +9,12 @@
 <div class="flex-center-elements">
     <h1>Welcome to the ASL app! This is the home page.</h1>
 </div>
+<br>
+<div class="flex-center-elements">
+    {% if email %}
+        <h3>You are logged in as {{ email }}</h3>
+    {% else %}
+        <h3>You have not logged in</h3>
+    {% endif %}
+</div>
 {% endblock %}

@@ -11,4 +11,12 @@
     justify-content: center;
     align-items: center;
 }
+.flex-align-space-between{
+    display: flex;
+    justify-content: space-around;
+}
+.long-button{
+    padding-right: 70px;
+    padding-left: 70px;
+}
 /*---------------*/
