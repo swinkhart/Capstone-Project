@@ -32,19 +32,21 @@
         </div>
     </form>
 </div>
+{% if blankInputError %}
 <br>
 <div class="flex-center-elements">
-    <div class="flex-center-elements login-form-width error-message">
-        {% if blankInputError %}
-            <span>{{ blankInputError }}</span>
-        {% endif %}
+    <div class="flex-center-elements login-form-width alert alert-danger alert-dismissible fade show" role="alert">
+        <span>{{ blankInputError }}</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 </div>
+{% endif %}
+{% if passwordMismatchError %}
 <div class="flex-center-elements">
-    <div class="flex-center-elements login-form-width error-message">
-        {% if passwordMismatchError %}
-            <span>{{ passwordMismatchError }}</span>
-        {% endif %}
+    <div class="flex-center-elements login-form-width alert alert-danger alert-dismissible fade show" role="alert">
+        <span>{{ passwordMismatchError }}</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 </div>
+{% endif %}
 {% endblock %}
