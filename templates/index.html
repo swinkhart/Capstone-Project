@@ -1,0 +1,12 @@
+{% if isLoggedIn %}
+    {% extends 'navbarLoggedIn.html' %}
+{% else %}
+    {% extends 'navbarNotLoggedIn.html' %}
+{% endif %}
+
+{% block content %}
+<br>
+<div class="flex-center-elements">
+    <h1>Welcome to the ASL app! This is the home page.</h1>
+</div>
+{% endblock %}

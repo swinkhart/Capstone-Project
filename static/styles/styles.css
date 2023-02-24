@@ -1,0 +1,14 @@
+/*----login page----*/
+.login-form-width{
+    width: 40%;
+}
+/*---------------*/
+
+
+/*----general----*/
+.flex-center-elements{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/*---------------*/
