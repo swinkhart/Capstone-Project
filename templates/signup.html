@@ -6,23 +6,23 @@
     <form class="container login-form-width" action="{{ url_for('signupResponse') }}" method="POST">
         <div class="mb-3">
             <label for="exampleInputFirstName" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="exampleInputFirstName" name="firstName">
+            <input type="text" class="form-control" id="exampleInputFirstName" name="firstName" value="{{ firstName }}">
         </div>
         <div class="mb-3">
             <label for="exampleInputLastName" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="exampleInputLastName" name="lastName">
+            <input type="text" class="form-control" id="exampleInputLastName" name="lastName" value="{{ lastName }}">
         </div>
         <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" value="{{ email }}">
         </div>
         <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+            <input type="password" class="form-control" id="exampleInputPassword1" name="password" value="{{ password }}">
         </div>
         <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label">Confirm Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1">
+            <input type="password" class="form-control" id="exampleInputPassword1" name="passwordVerify" value="{{ passwordVerify }}">
         <div id="passwordHelpBlock" class="form-text">
             Your password must be atleast 8 characters long, contain letters and numbers, and must not contain spaces.
         </div>
@@ -31,5 +31,20 @@
             <button type="submit" class="btn btn-outline-warning long-button">Submit</button>
         </div>
     </form>
+</div>
+<br>
+<div class="flex-center-elements">
+    <div class="flex-center-elements login-form-width error-message">
+        {% if blankInputError %}
+            <span>{{ blankInputError }}</span>
+        {% endif %}
+    </div>
+</div>
+<div class="flex-center-elements">
+    <div class="flex-center-elements login-form-width error-message">
+        {% if passwordMismatchError %}
+            <span>{{ passwordMismatchError }}</span>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

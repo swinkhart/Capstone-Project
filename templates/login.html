@@ -6,11 +6,11 @@
     <form class="container login-form-width" action="{{ url_for('index') }}" method="POST">
         <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Email address</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" value="{{ email }}">
         </div>
         <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">Password</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+        <input type="password" class="form-control" id="exampleInputPassword1" name="password" value="{{ password }}">
         </div>
         <br>
         <div class="flex-align-space-between">
@@ -18,5 +18,13 @@
             <a class="btn btn-outline-warning long-button" href="{{ url_for('signup') }}" role="button">Signup</a>
         </div>
     </form>
+</div>
+<br>
+<div class="flex-center-elements">
+    <div class="flex-center-elements login-form-width error-message">
+        {% if blankInputError %}
+            <span>{{ blankInputError }}</span>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
