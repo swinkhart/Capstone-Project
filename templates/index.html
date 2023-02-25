@@ -17,4 +17,14 @@
         <h3>You have not logged in</h3>
     {% endif %}
 </div>
+<br>
+<br>
+<h3 class="flex-center-elements">These are all of the current users in the database:</h3>
+<div class="flex-center-elements">
+    <ul>
+        {% for user in usersInDatabase %}
+            <li><h4>| email: {{ user.email }} | password: {{ user.password }} |</h4></li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}

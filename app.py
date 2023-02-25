@@ -1,14 +1,30 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+db = SQLAlchemy(app)
 
+# database tables
+class Users(db.Model):
+    firstName = db.Column(db.String(200), nullable=False)
+    lastName = db.Column(db.String(200), nullable=False)
+    email = db.Column(db.String(200), primary_key=True)
+    password = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return '<Email %r>' % self.email
+
+# website routes
 isLoggedIn = False
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-    email = request.form.get("email")
-    password = request.form.get("password")
-    return render_template("index.html", isLoggedIn=isLoggedIn, email=email)
+    #email = request.form.get("email")
+    #password = request.form.get("password")
+
+    usersInDatabase = Users.query.all()
+    return render_template("index.html", isLoggedIn=isLoggedIn, usersInDatabase=usersInDatabase)
 
 @app.route('/login')
 def login():
@@ -38,7 +54,16 @@ def signupResponse():
         return render_template("signup.html", firstName=firstName, lastName=lastName, email=email, password=password, passwordVerify=passwordVerify,
                                blankInputError=blankInputError, passwordMismatchError=passwordMismatchError)
     else:
-        return render_template("signupResponse.html", firstName=firstName, lastName=lastName, email=email, password=password), {"Refresh": "2; url=/login"}
+        # add to database class
+        newUser = Users(firstName=firstName, lastName=lastName, email=email, password=password)
+
+        # push and commit to database
+        try:
+            db.session.add(newUser)
+            db.session.commit()
+            return render_template("signupResponse.html"), {"Refresh": "2; url=/login"}
+        except:
+            return "error adding user to database"
 
 @app.route('/flashcard')
 def flashcard():
