@@ -14,4 +14,4 @@
  - Lastly, type **"db.create_all()"** to create the database (NOTE: db.create_all() does not recreate or update tables that already exist. You will need to drop the database with **"db.drop_all()"** and then recreate it again if changes are made to the database)
 
 **NOTE:**
- - when committing files, do not commit the database file (with .db suffix)
+ - When committing files, do not commit the database file (with .db suffix)
