@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.secret_key = "test"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 db = SQLAlchemy(app)
 
@@ -13,22 +14,39 @@ class Users(db.Model):
     password = db.Column(db.String(200), nullable=False)
 
     def __repr__(self):
-        return '<Email %r>' % self.email
+        return self.email
 
 # website routes
-isLoggedIn = False
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-    #email = request.form.get("email")
-    #password = request.form.get("password")
+    email = ""
+    if "userEmail" in session:
+        email = session["userEmail"]
 
     usersInDatabase = Users.query.all()
-    return render_template("index.html", isLoggedIn=isLoggedIn, usersInDatabase=usersInDatabase)
+    return render_template("index.html", email=email, usersInDatabase=usersInDatabase)
 
-@app.route('/login')
+@app.route('/login', methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    incorrectLoginInfo = ""
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        infoRecords = Users.query.with_entities(Users.email, Users.password).all()
+        for infoRecord in infoRecords:
+            if (email == infoRecord.email) and (password == infoRecord.password):
+                session["userEmail"] = email
+                return redirect(url_for("index"))
+        incorrectLoginInfo = "incorrect email or password"
+        return render_template("login.html", incorrectLoginInfo=incorrectLoginInfo)
+    else:
+        return render_template("login.html")
+    
+@app.route('/logout')
+def logout():
+    session.pop("userEmail", None)
+    return redirect(url_for("login"))
 
 @app.route('/signup')
 def signup():

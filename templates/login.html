@@ -3,7 +3,7 @@
 <br>
 <br>
 <div class="flex-center-elements">
-    <form class="container login-form-width" action="{{ url_for('index') }}" method="POST">
+    <form class="container login-form-width" action="{{ url_for('login') }}" method="POST">
         <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Email address</label>
         <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" value="{{ email }}">
@@ -14,17 +14,18 @@
         </div>
         <br>
         <div class="flex-align-space-between">
-            <button type="submit" class="btn btn-outline-warning long-button">Submit</button>
-            <a class="btn btn-outline-warning long-button" href="{{ url_for('signup') }}" role="button">Signup</a>
+            <button type="submit" class="btn btn-outline-warning long-button button-customization">Submit</button>
+            <a class="btn btn-outline-warning long-button button-customization" href="{{ url_for('signup') }}" role="button">Signup</a>
         </div>
     </form>
 </div>
 <br>
+{% if incorrectLoginInfo %}
 <div class="flex-center-elements">
-    <div class="flex-center-elements login-form-width error-message">
-        {% if blankInputError %}
-            <span>{{ blankInputError }}</span>
-        {% endif %}
+    <div class="flex-center-elements login-form-width alert alert-danger alert-dismissible fade show" role="alert">
+        <span>{{ incorrectLoginInfo }}</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 </div>
+{% endif %}
 {% endblock %}

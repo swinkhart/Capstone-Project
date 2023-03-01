@@ -20,3 +20,22 @@
     padding-left: 70px;
 }
 /*---------------*/
+
+
+/*----navbarLoggedIn----*/
+.button-customization{
+    border-radius: 20px;
+}
+/*---------------*/
+
+
+/*----fixing form autofill background color issue----*/
+input:-webkit-autofill { 
+    -webkit-box-shadow: 0 0 0 1000px rgb(33,37,41) inset !important;
+    -webkit-text-fill-color: rgb(173,181,189);
+}
+input:-webkit-autofill:focus { 
+    -webkit-box-shadow: 0 0 0 1000px rgb(33,37,41) inset !important;
+    -webkit-text-fill-color: rgb(173,181,189);
+}
+/*---------------*/
