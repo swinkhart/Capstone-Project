@@ -8,9 +8,9 @@ db = SQLAlchemy(app)
 
 # database tables
 class Users(db.Model):
-    firstName = db.Column(db.String(200), nullable=False)
-    lastName = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(200), primary_key=True)
+    classNumber = db.Column(db.String(200), nullable=False)
+    accountType = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(200), nullable=False)
 
     def __repr__(self):
@@ -54,26 +54,26 @@ def signup():
 
 @app.route('/signupResponse', methods=["POST"])
 def signupResponse():
-    firstName = request.form.get("firstName")
-    lastName = request.form.get("lastName")
+    classNumber = request.form.get("classNumber")
+    accountType = request.form.get("accountType")
     email = request.form.get("email")
     password = request.form.get("password")
     passwordVerify = request.form.get("passwordVerify")
     blankInputError = ""
     passwordMismatchError = ""
 
-    if not firstName or not lastName or not email or not password or not passwordVerify:
+    if not classNumber or not accountType or not email or not password or not passwordVerify:
         blankInputError = "please fill in all fields"
     
     if password != passwordVerify:
         passwordMismatchError = "passwords do not match"
 
     if blankInputError or passwordMismatchError:
-        return render_template("signup.html", firstName=firstName, lastName=lastName, email=email, password=password, passwordVerify=passwordVerify,
+        return render_template("signup.html", classNumber=classNumber, accountType=accountType, email=email, password=password, passwordVerify=passwordVerify,
                                blankInputError=blankInputError, passwordMismatchError=passwordMismatchError)
     else:
         # add to database class
-        newUser = Users(firstName=firstName, lastName=lastName, email=email, password=password)
+        newUser = Users(classNumber=classNumber, accountType=accountType, email=email, password=password)
 
         # push and commit to database
         try:
