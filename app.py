@@ -87,3 +87,6 @@ def signupResponse():
 def flashcard():
     return render_template("flashcard.html")
 
+@app.route('/flashcard_add')
+def flashcard_add():
+    return render_template("flashcard_add.html")
