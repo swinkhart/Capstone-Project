@@ -5,16 +5,28 @@
 <div class="flex-center-elements">
     <form class="container login-form-width" action="{{ url_for('signupResponse') }}" method="POST">
         <div class="mb-3">
-            <label for="exampleInputFirstName" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="exampleInputFirstName" name="firstName" value="{{ firstName }}">
-        </div>
-        <div class="mb-3">
-            <label for="exampleInputLastName" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="exampleInputLastName" name="lastName" value="{{ lastName }}">
-        </div>
-        <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Email address</label>
             <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" value="{{ email }}">
+        </div>
+        <div>
+            <label for="exampleSelector1" class="form-label">Class Number</label>
+            <div class="input-group mb-3">
+                <select class="form-select" id="inputGroupSelect03" aria-label="Example select with button addon" name="classNumber" value="{{ classNumber }}">
+                    <option value="asl_1">ASL_1</option>
+                    <option value="asl_2">ASL_2</option>
+                    <option value="asl_3">ASL_3</option>
+                    <option value="asl_4">ASL_4</option>  
+                </select>
+            </div>
+        </div>
+        <div>
+            <label for="exampleSelector2" class="form-label">Account Type</label>
+            <div class="input-group mb-3">
+                <select class="form-select" id="inputGroupSelect04" aria-label="Example select with button addon" name="accountType" value="{{ accountType }}">
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option> 
+                </select>
+            </div>
         </div>
         <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label">Password</label>

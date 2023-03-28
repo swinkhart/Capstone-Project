@@ -23,7 +23,7 @@
 <div class="flex-center-elements">
     <ul>
         {% for user in usersInDatabase %}
-            <li><h4>| email: {{ user.email }} | password: {{ user.password }} |</h4></li>
+            <li><h4>| email: {{ user.email }} | class number: {{ user.classNumber }} | account type: {{ user.accountType }} | password: {{ user.password }} |</h4></li>
         {% endfor %}
     </ul>
 </div>
