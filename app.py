@@ -8,11 +8,30 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://user1:testpwd@capstone5
 db = SQLAlchemy(app)
 
 # database table models
+#modify to be one to many 
 class Login(db.Model):
     email = db.Column(db.String(200), primary_key=True)
     class_number = db.Column(db.Integer, nullable=False)
     account_type = db.Column(db.Boolean, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+
+#do we even need this table?
+#class Course_Numbers(db.Model):
+    #stuff
+
+#figure out many to many or define a units table for each class --> one to many
+class Units(db.Model):
+    unit_number = db.Column(db.Integer, primary_key=True)
+    class_number = db.Column(db.Integer, db.ForeignKey('Login.class_number'))
+    #more stuff here 
+
+#the many
+class Card_Sets(db.Model):
+    word = db.Column(db.String(50), primary_key=True)
+    letter = db.Column(db.String(10), nullable=False)
+    unit_number = db.Column(db.Integer, db.ForeignKey('Units.unit_number'))
+    gif_path = db.Column(db.String(100), nullable=False)
+    #more stuff here
 
 # website routes
 
