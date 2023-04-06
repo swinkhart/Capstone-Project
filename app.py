@@ -8,7 +8,7 @@ import time
 
 app = Flask(__name__)
 app.secret_key = "test"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://user1:testpwd@capstone5.cs.kent.edu/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://user1:testpwd@capstone5.cs.kent.edu/main'
 db = SQLAlchemy(app)
 
 def hash_password(password):
@@ -25,28 +25,44 @@ def random_string():
     result = ''.join(choices)
     return result
 
-# database table models
-#modify to be one to many 
+# database table models 
 class Login(db.Model):
     email = db.Column(db.String(200), primary_key=True)
-    class_number = db.Column(db.Integer, nullable=False)
     account_type = db.Column(db.Boolean, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     salt = db.Column(db.String(25), nullable=False)
 
-#figure out many to many or define a units table for each class --> one to many
-class Units(db.Model):
+class asl_1_units(db.Model):
     unit_number = db.Column(db.Integer, primary_key=True)
-    class_number = db.Column(db.Integer, db.ForeignKey('Login.class_number'))
-    #more stuff here 
 
-#the many
-class Card_Sets(db.Model):
+class asl_2_units(db.Model):
+    unit_number = db.Column(db.Integer, primary_key=True)
+
+class asl_3_units(db.Model):
+    unit_number = db.Column(db.Integer, primary_key=True)
+
+class asl_4_units(db.Model):
+    unit_number = db.Column(db.Integer, primary_key=True)
+
+class asl_1_set(db.Model):
     word = db.Column(db.String(50), primary_key=True)
-    letter = db.Column(db.String(10), nullable=False)
-    unit_number = db.Column(db.Integer, db.ForeignKey('Units.unit_number'))
+    unit_number = db.Column(db.Integer, db.ForeignKey('asl_1_units.unit_number'))
     gif_path = db.Column(db.String(100), nullable=False)
-    #more stuff here
+
+class asl_2_set(db.Model):
+    word = db.Column(db.String(50), primary_key=True)
+    unit_number = db.Column(db.Integer, db.ForeignKey('asl_2_units.unit_number'))
+    gif_path = db.Column(db.String(100), nullable=False)
+
+class asl_3_set(db.Model):
+    word = db.Column(db.String(50), primary_key=True)
+    unit_number = db.Column(db.Integer, db.ForeignKey('asl_3_units.unit_number'))
+    gif_path = db.Column(db.String(100), nullable=False)
+
+class asl_4_set(db.Model):
+    word = db.Column(db.String(50), primary_key=True)
+    unit_number = db.Column(db.Integer, db.ForeignKey('asl_4_units.unit_number'))
+    gif_path = db.Column(db.String(100), nullable=False)
 
 # website routes
 
@@ -111,7 +127,7 @@ def signupResponse():
         # add to database class
         tempSalt = random_string()
         tempPassword = hash_password(tempPassword + tempSalt)
-        newUser = Login(email=tempEmail, class_number=int(tempClassNumber), account_type=bool(int(tempAccountType)), password=tempPassword, salt=tempSalt)
+        newUser = Login(email=tempEmail, account_type=bool(int(tempAccountType)), password=tempPassword, salt=tempSalt)
 
         # push and commit to database
         try:
