@@ -15,10 +15,6 @@ class Login(db.Model):
     account_type = db.Column(db.Boolean, nullable=False)
     password = db.Column(db.String(200), nullable=False)
 
-#do we even need this table?
-#class Course_Numbers(db.Model):
-    #stuff
-
 #figure out many to many or define a units table for each class --> one to many
 class Units(db.Model):
     unit_number = db.Column(db.Integer, primary_key=True)
