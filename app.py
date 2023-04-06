@@ -90,6 +90,12 @@ def login():
         for infoRecord in infoRecords:
             if (email == infoRecord.email) and (hash_password(password + (infoRecord.salt)) == infoRecord.password):
                 session["userEmail"] = email
+                """
+                if (infoRecord.email == 1):
+                    session["isTeacher"] = true
+                else:
+                    session["isTeacher"] = false
+                """
                 return redirect(url_for("index"))
         tempIncorrectLoginInfo = "incorrect email or password"
         return render_template("login.html", incorrectLoginInfo=tempIncorrectLoginInfo)
@@ -138,10 +144,34 @@ def signupResponse():
         except:
             return "error adding user to database"
 
-@app.route('/flashcard')
+@app.route('/Classes')
 def flashcard():
-    return render_template("flashcard.html")
+    return render_template("Classes.html")
 
-@app.route('/flashcard_add')
+@app.route('/Units')
+def flashcard():
+    return render_template("Units.html")
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/flashcard_add', methods=['GET', 'POST'])
 def flashcard_add():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['gif']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('flashcard_add',
+                                    filename=filename))
     return render_template("flashcard_add.html")
