@@ -5,16 +5,17 @@
     <section class="pb-5 mb-5 pt-5">
         <div class="container">
           <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
-            {# {%for card in unit%} #}
+            {# {%for set in Class %} #}
             <div class="col">
-                <a type="button" class="btn btn-secondary btn-sq-responsive px-5 py-2" data-bs-theme="dark">{# {% card %} #}</a>
+                <a type="button" class="btn btn-secondary btn-sq-responsive px-5 py-2" data-bs-theme="dark">{# {% set %} #}</a>
             </div>
             {# {%endfor%}#}
+
             {# {%if teacher%} #}
             <div class="col">
                 <a type="button" class="btn btn-secondary btn-sq-responsive px-5 py-2" data-bs-theme="dark" href="{{ url_for('flashcard_add') }}">&plus;</a>
             </div>
-            {# {%endfor%}#}
+            {# {%endif%}#}
           </div>
         </div>
       </section>

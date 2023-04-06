@@ -5,6 +5,7 @@ import hashlib
 import string
 import random
 import time
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "test"
