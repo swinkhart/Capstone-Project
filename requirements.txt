@@ -2,3 +2,5 @@ flask
 flask-sqlalchemy
 pymysql
 werkzeug
+WTForms
+Flask-WTF

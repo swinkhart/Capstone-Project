@@ -1,16 +1,30 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, flash, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileRequired, FileAllowed
+from wtforms import FileField, SubmitField, SelectField, IntegerField, StringField
+from wtforms.validators import InputRequired, DataRequired, NumberRange
 import pymysql
 import hashlib
 import string
 import random
 import time
-from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.secret_key = "test"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://user1:testpwd@capstone5.cs.kent.edu/main'
 db = SQLAlchemy(app)
+
+app.config['UPLOAD_FOLDER'] = 'static/images'
+
+class UploadFileForm(FlaskForm):
+    ASLClass = SelectField('ASLClass', validators=[InputRequired()], choices = [(1, "ASL 1"), (2, "ASL 2"), (3, "ASL 3"), (4, "ASL 4")])
+    setNumber= IntegerField('SetNum', validators=[InputRequired(), DataRequired(), NumberRange(min=1)])
+    GIFWord = StringField ('Word', validators=[InputRequired()])
+    file = FileField('image', validators=[FileRequired(), FileAllowed(['gif'], 'GIFs only!')])
+    submit = SubmitField("Upload File")
 
 def hash_password(password):
     word = password
@@ -105,6 +119,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop("userEmail", None)
+    #session.pop("isTeacher", None)
     return redirect(url_for("login"))
     
 @app.route('/signup')
@@ -145,33 +160,30 @@ def signupResponse():
             return "error adding user to database"
 
 @app.route('/Classes')
-def flashcard():
+def Classes():
     return render_template("Classes.html")
 
 @app.route('/Units')
-def flashcard():
+def Units():
     return render_template("Units.html")
 
-def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+@app.route('/flashcard')
+def flashcard():
+    return render_template("flashcard.html")
 
-@app.route('/flashcard_add', methods=['GET', 'POST'])
+@app.route('/flashcard_add', methods=["GET", "POST"])
 def flashcard_add():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['gif']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('flashcard_add',
-                                    filename=filename))
-    return render_template("flashcard_add.html")
+    form = UploadFileForm()
+    if form.validate_on_submit():
+        file = form.file.data
+        ClassNum = form.ASLClass.data
+        setNum = str(form.setNumber.data)
+        WordGIF = form.GIFWord.data
+        FilePath = "ASL_" + ClassNum + "_Set_" + setNum + "_" + WordGIF
+        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
+        return FilePath + " has ben added to database"
+    return render_template("flashcard_add.html", form=form)
+
+@app.route('/flashcard_added', methods=["GET", "POST"])
+def flashcard_added():
+    return render_template("flashcard_added.html")
