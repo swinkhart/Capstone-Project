@@ -1,0 +1,17 @@
+{% extends 'navbarLoggedIn.html' %}
+{% block content %}
+<br>
+<div class="flex-center-elements">
+    <section class="pb-5 mb-5 pt-5">
+        <div class="container">
+          <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
+            {# {%for Unit in Units %} #}
+            <div class="col">
+                <a type="button" class="btn btn-secondary btn-sq-responsive px-5 py-2" data-bs-theme="dark">{# {% unit %} #}</a>
+            </div>
+            {# {%endfor%}#}
+          </div>
+        </div>
+      </section>
+</div>
+{% endblock %}

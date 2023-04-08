@@ -1,0 +1,23 @@
+
+create table login (email varchar(200) not null, account_type boolean not null, password varchar(200) not null, salt varchar(20) not null);
+
+create table asl_1_units(unit_number int not null, primary key(unit_number));
+
+create table asl_2_units(unit_number int not null, primary key(unit_number));
+
+create table asl_3_units(unit_number int not null, primary key(unit_number));
+
+create table asl_4_units(unit_number int not null, primary key(unit_number));
+
+create table asl_1_set(
+	word varchar(50) not null, 
+	unit_number int not null, 
+	gif_path varchar(100) not null, 
+	primary key(word), 
+	foreign key(unit_number) references asl_1_units(unit_number));
+
+create table asl_2_set(word varchar(50) not null, unit_number int not null, gif_path varchar(100) not null, primary key(word), foreign key(unit_number) references asl_2_units(unit_number));
+
+create table asl_3_set(word varchar(50) not null, unit_number int not null, gif_path varchar(100) not null, primary key(word), foreign key(unit_number) references asl_3_units(unit_number));
+
+create table asl_4_set(word varchar(50) not null, unit_number int not null, gif_path varchar(100) not null, primary key(word), foreign key(unit_number) references asl_4_units(unit_number));
