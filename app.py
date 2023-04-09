@@ -105,7 +105,7 @@ def login():
             if (email == infoRecord.email) and (hash_password(password + (infoRecord.salt)) == infoRecord.password):
                 session["userEmail"] = email
                 """
-                if (infoRecord.email == 1):
+                if (infoRecord.account_type == 1):
                     session["isTeacher"] = true
                 else:
                     session["isTeacher"] = false
@@ -129,27 +129,26 @@ def signup():
 @app.route('/signupResponse', methods=["POST"])
 def signupResponse():
     tempClassNumber = request.form.get("classNumber")
-    tempAccountType = request.form.get("accountType")
     tempEmail = request.form.get("email")
     tempPassword = request.form.get("password")
     tempPasswordVerify = request.form.get("passwordVerify")
     tempBlankInputError = ""
     tempPasswordMismatchError = ""
 
-    if not tempClassNumber or not tempAccountType or not tempEmail or not tempPassword or not tempPasswordVerify:
+    if not tempClassNumber or not tempEmail or not tempPassword or not tempPasswordVerify:
         tempBlankInputError = "please fill in all fields"
     
     if tempPassword != tempPasswordVerify:
         tempPasswordMismatchError = "passwords do not match"
 
     if tempBlankInputError or tempPasswordMismatchError:
-        return render_template("signup.html", classNumber=tempClassNumber, accountType=tempAccountType, email=tempEmail, password=tempPassword, passwordVerify=tempPasswordVerify,
+        return render_template("signup.html", classNumber=tempClassNumber, email=tempEmail, password=tempPassword, passwordVerify=tempPasswordVerify,
                                blankInputError=tempBlankInputError, passwordMismatchError=tempPasswordMismatchError)
     else:
         # add to database class
         tempSalt = random_string()
         tempPassword = hash_password(tempPassword + tempSalt)
-        newUser = Login(email=tempEmail, account_type=bool(int(tempAccountType)), password=tempPassword, salt=tempSalt)
+        newUser = Login(email=tempEmail, account_type=0, password=tempPassword, salt=tempSalt)
 
         # push and commit to database
         try:
@@ -161,6 +160,8 @@ def signupResponse():
 
 @app.route('/Classes')
 def Classes():
+    if "class_number" in session:
+        session.pop("class_number", None)
     return render_template("Classes.html")
 
 @app.route('/Units')
@@ -169,7 +170,41 @@ def Units():
 
 @app.route('/flashcard')
 def flashcard():
-    return render_template("flashcard.html")
+    return render_template("classes.html")
+
+@app.route('/flashcard_units/<class_number>')
+def flashcard_units(class_number):
+    if class_number == "asl_1_units":
+        session["class_number"] = "asl_1_units"
+        tempSets = asl_1_units.query.with_entities(asl_1_units.unit_number).all()
+        return render_template("flashcard_units.html", sets=tempSets)
+    elif class_number == "asl_2_units":
+        session["class_number"] = "asl_2_units"
+        tempSets = asl_2_units.query.with_entities(asl_2_units.unit_number).all()
+        return render_template("flashcard_units.html", sets=tempSets)
+    elif class_number == "asl_3_units":
+        session["class_number"] = "asl_3_units"
+        tempSets = asl_3_units.query.with_entities(asl_3_units.unit_number).all()
+        return render_template("flashcard_units.html", sets=tempSets)
+    elif class_number == "asl_4_units":
+        session["class_number"] = "asl_4_units"
+        tempSets = asl_4_units.query.with_entities(asl_4_units.unit_number).all()
+        return render_template("flashcard_units.html", sets=tempSets)
+
+@app.route('/flashcard_cards/<unit_number>')
+def flashcard_cards(unit_number):
+    if session["class_number"] == "asl_1_units":
+        tempCards = asl_1_set.query.filter(asl_1_set.unit_number == unit_number).all()
+        return render_template("flashcard_cards.html", cards=tempCards)
+    elif session["class_number"] == "asl_2_units":
+        tempCards = asl_2_set.query.filter(asl_2_set.unit_number == unit_number).all()
+        return render_template("flashcard_cards.html", cards=tempCards)
+    elif session["class_number"] == "asl_3_units":
+        tempCards = asl_3_set.query.filter(asl_3_set.unit_number == unit_number).all()
+        return render_template("flashcard_cards.html", cards=tempCards)
+    elif session["class_number"] == "asl_4_units":
+        tempCards = asl_4_set.query.filter(asl_4_set.unit_number == unit_number).all()
+        return render_template("flashcard_cards.html", cards=tempCards)
 
 @app.route('/flashcard_add', methods=["GET", "POST"])
 def flashcard_add():
@@ -179,7 +214,7 @@ def flashcard_add():
         ClassNum = form.ASLClass.data
         setNum = form.setNumber.data
         WordGIF = form.GIFWord.data
-        FilePath = "ASL_" + ClassNum + "_Set_" + str(setNum) + "_" + WordGIF
+        FilePath = ClassNum + "_" + str(setNum) + "_" + WordGIF
         match int(ClassNum):
             case 1:
                 check_one = False
@@ -200,7 +235,7 @@ def flashcard_add():
                 try:
                     db.session.add(newFlashcard)
                     db.session.commit()
-                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
+                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(WordGIF)))
                     return render_template("flashcard_added.html"), {"Refresh": "2; url=/flashcard_add"}
                 except:
                     return "error adding Flashcard to database"
@@ -222,7 +257,7 @@ def flashcard_add():
                 try:
                     db.session.add(newFlashcard)
                     db.session.commit()
-                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
+                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(WordGIF)))
                     return render_template("flashcard_added.html"), {"Refresh": "2; url=/flashcard_add"}
                 except:
                     return "error adding user to database"
@@ -244,7 +279,7 @@ def flashcard_add():
                 try:
                     db.session.add(newFlashcard)
                     db.session.commit()
-                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
+                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(WordGIF)))
                     return render_template("flashcard_added.html"), {"Refresh": "2; url=/flashcard_add"}
                 except:
                     return "error adding user to database"
@@ -266,7 +301,7 @@ def flashcard_add():
                 try:
                     db.session.add(newFlashcard)
                     db.session.commit()
-                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
+                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(WordGIF)))
                     return render_template("flashcard_added.html"), {"Refresh": "2; url=/flashcard_add"}
                 except:
                     return "error adding user to database"

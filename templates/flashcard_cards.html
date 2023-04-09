@@ -1,0 +1,39 @@
+{% extends 'navbarLoggedIn.html' %}
+{% block content %}
+<br>
+<div class="flex-center-elements">
+    <h1>Cards for this unit</h1>
+</div>
+<div class="flex-center-elements">
+    <section class="pb-5 mb-5 pt-5">
+        <div class="container">
+          <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
+            {% for card in cards %}
+            <div class="col">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-secondary btn-sq-responsive btn-lg px-5 py-2 col-12" data-bs-theme="dark" 
+                data-bs-toggle="modal" data-bs-target="#{{ card.word }}">
+                    {{ card.word }}
+                </button>
+                
+                <!-- Modal -->
+                <div class="modal fade" id="{{ card.word }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">{{ card.word }}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <img src="/static/images/{{ card.word }}" height="100%" width="100%">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+</div>
+{% endblock %}

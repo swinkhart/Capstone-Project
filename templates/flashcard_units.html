@@ -1,0 +1,21 @@
+{% extends 'navbarLoggedIn.html' %}
+{% block content %}
+<br>
+<div class="flex-center-elements">
+    <h1>Available units for this class</h1>
+</div>
+<div class="flex-center-elements">
+    <section class="pb-5 mb-5 pt-5">
+        <div class="container">
+          <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
+            {% for card in sets %}
+            <div class="col">
+                <a type="button" class="btn btn-secondary btn-sq-responsive btn-lg px-5 py-2" data-bs-theme="dark"
+                href="{{ url_for('flashcard_cards', unit_number=card.unit_number) }}">Unit number {{ card.unit_number }}</a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+</div>
+{% endblock %}
