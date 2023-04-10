@@ -88,9 +88,7 @@ def index():
     if "userEmail" in session:
         tempEmail = session["userEmail"]
 
-    tempUsersInDatabase = db.session.query(Login.email)
-    return render_template("index.html", email=tempEmail, usersInDatabase=tempUsersInDatabase)
-    #return render_template("index.html")
+    return render_template("index.html", email=tempEmail)
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -99,17 +97,18 @@ def login():
         email = request.form.get("email")
         password = request.form.get("password")
         time.sleep(1)
-        infoRecords = Login.query.with_entities(Login.email, Login.password, Login.salt).all()
-        print(infoRecords)
+        infoRecords = Login.query.with_entities(Login.email, Login.password, Login.account_type, Login.salt).all()
         for infoRecord in infoRecords:
             if (email == infoRecord.email) and (hash_password(password + (infoRecord.salt)) == infoRecord.password):
                 session["userEmail"] = email
-                """
+                
                 if (infoRecord.account_type == 1):
-                    session["isTeacher"] = true
+                    session["isTeacher"] = True
                 else:
-                    session["isTeacher"] = false
-                """
+                    session["isTeacher"] = False
+
+                print(session["isTeacher"])
+                
                 return redirect(url_for("index"))
         tempIncorrectLoginInfo = "incorrect email or password"
         return render_template("login.html", incorrectLoginInfo=tempIncorrectLoginInfo)
@@ -119,7 +118,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop("userEmail", None)
-    #session.pop("isTeacher", None)
+    session.pop("isTeacher", None)
     return redirect(url_for("login"))
     
 @app.route('/signup')
@@ -219,7 +218,6 @@ def flashcard_add():
             case 1:
                 check_one = False
                 sets = asl_1_units.query.with_entities(asl_1_units.unit_number).all()
-                print(sets)
                 for set in sets:
                     if setNum == set.unit_number:
                         check_one = True
