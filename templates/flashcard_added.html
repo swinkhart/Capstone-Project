@@ -1,4 +1,9 @@
-{% extends 'navbarLoggedIn.html' %}
+{% if session["isTeacher"] %}
+    {% extends 'navbarLoggedInTeacher.html' %}
+{% else %}
+    {% extends 'navbarLoggedIn.html' %}
+{% endif %}
+
 {% block content %}
 <p><h1 align="center">Flashcard created</h1></p>
 {% endblock %}

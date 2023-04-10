@@ -1,4 +1,9 @@
-{% extends 'navbarLoggedIn.html' %}
+{% if session["isTeacher"] %}
+    {% extends 'navbarLoggedInTeacher.html' %}
+{% else %}
+    {% extends 'navbarLoggedIn.html' %}
+{% endif %}
+
 {% block content %}
 <br>
 <div class="flex-center-elements">
