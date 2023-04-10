@@ -1,0 +1,95 @@
+{% if session["isTeacher"] %}
+    {% extends 'navbarLoggedInTeacher.html' %}
+{% else %}
+    {% extends 'navbarLoggedIn.html' %}
+{% endif %}
+
+{% block content %}
+<br>
+<div class="flex-center-elements">
+    <h1>ASL 1 cards</h1>
+</div>
+<div class="flex-center-elements">
+    <section class="pb-5 mb-5 pt-5">
+        <div class="container">
+          <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
+            {% for ASL1Card in ASL1 %}
+            <div class="col">               
+                <button class="btn btn-secondary btn-lg" disabled>unit# {{ ASL1Card.unit_number}}: {{ ASL1Card.word }}</button>
+                <a class="btn btn-outline-warning btn-sq-responsive btn-lg" data-bs-theme="dark" 
+                href="{{ url_for('flashcard_deleted', gifPath=ASL1Card.gif_path) }}">
+                    delete
+                </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+</div>
+
+<br>
+<div class="flex-center-elements">
+    <h1>ASL 2 cards</h1>
+</div>
+<div class="flex-center-elements">
+    <section class="pb-5 mb-5 pt-5">
+        <div class="container">
+          <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
+            {% for ASL2Card in ASL2 %}
+            <div class="col">
+                <button class="btn btn-secondary btn-lg" disabled>unit# {{ ASL2Card.unit_number}}: {{ ASL2Card.word }}</button>
+                <a class="btn btn-outline-warning btn-sq-responsive btn-lg" data-bs-theme="dark" 
+                href="{{ url_for('flashcard_deleted', gifPath=ASL2Card.gif_path) }}">
+                    delete
+                </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+</div>
+
+<br>
+<div class="flex-center-elements">
+    <h1>ASL 3 cards</h1>
+</div>
+<div class="flex-center-elements">
+    <section class="pb-5 mb-5 pt-5">
+        <div class="container">
+          <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
+            {% for ASL3Card in ASL3 %}
+            <div class="col">
+                <button class="btn btn-secondary btn-lg" disabled>unit# {{ ASL3Card.unit_number}}: {{ ASL3Card.word }}</button>
+                <a class="btn btn-outline-warning btn-sq-responsive btn-lg" data-bs-theme="dark" 
+                href="{{ url_for('flashcard_deleted', gifPath=ASL3Card.gif_path) }}">
+                    delete
+                </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+</div>
+
+<br>
+<div class="flex-center-elements">
+    <h1>ASL 4 cards</h1>
+</div>
+<div class="flex-center-elements">
+    <section class="pb-5 mb-5 pt-5">
+        <div class="container">
+          <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
+            {% for ASL4Card in ASL4 %}
+            <div class="col">
+                <button class="btn btn-secondary btn-lg" disabled>unit# {{ ASL4Card.unit_number}}: {{ ASL4Card.word }}</button>
+                <a class="btn btn-outline-warning btn-sq-responsive btn-lg" data-bs-theme="dark" 
+                href="{{ url_for('flashcard_deleted', gifPath=ASL4Card.gif_path) }}">
+                    delete
+                </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+</div>
+{% endblock %}

@@ -1,4 +1,9 @@
-{% extends 'navbarLoggedIn.html' %}
+{% if session["isTeacher"] %}
+    {% extends 'navbarLoggedInTeacher.html' %}
+{% else %}
+    {% extends 'navbarLoggedIn.html' %}
+{% endif %}
+
 {% block content %}
 <br>
 <div class="flex-center-elements">
@@ -11,7 +16,7 @@
             {% for card in cards %}
             <div class="col">
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-secondary btn-sq-responsive btn-lg px-5 py-2 col-12" data-bs-theme="dark" 
+                <button type="button" class="btn btn-secondary btn-sq-responsive btn-lg px-5 py-2" data-bs-theme="dark" 
                 data-bs-toggle="modal" data-bs-target="#{{ card.word }}">
                     {{ card.word }}
                 </button>
@@ -25,7 +30,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <img src="/static/images/{{ card.word }}" height="100%" width="100%">
+                            <img src="/static/images/{{ card.gif_path }}" height="100%" width="100%">
                         </div>
                     </div>
                     </div>
