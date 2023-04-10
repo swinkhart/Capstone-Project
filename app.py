@@ -40,6 +40,15 @@ def random_string():
     result = ''.join(choices)
     return result
 
+def hasSpace(inputString):
+    return any(char.isspace() for char in inputString)
+
+def hasNum(inputString):
+    return any(char.isdigit() for char in inputString)
+
+def hasChar(inputString):
+    return any(char.isalpha() for char in inputString)
+
 # database table models 
 class Login(db.Model):
     email = db.Column(db.String(200), primary_key=True)
@@ -133,6 +142,7 @@ def signupResponse():
     tempPasswordVerify = request.form.get("passwordVerify")
     tempBlankInputError = ""
     tempPasswordMismatchError = ""
+    tempPasswordReqError = ""
 
     if not tempClassNumber or not tempEmail or not tempPassword or not tempPasswordVerify:
         tempBlankInputError = "please fill in all fields"
@@ -140,9 +150,18 @@ def signupResponse():
     if tempPassword != tempPasswordVerify:
         tempPasswordMismatchError = "passwords do not match"
 
-    if tempBlankInputError or tempPasswordMismatchError:
+    if len(tempPassword) < 8:
+        tempPasswordReqError = "password must be at least 8 characters long"
+
+    if hasSpace(tempPassword):
+        tempPasswordReqError = "password must contain no spaces"
+
+    if not (hasChar(tempPassword) and hasNum(tempPassword)):
+        tempPasswordReqError = "password must have at least a letter and a number"
+
+    if tempBlankInputError or tempPasswordMismatchError or tempPasswordReqError:
         return render_template("signup.html", classNumber=tempClassNumber, email=tempEmail, password=tempPassword, passwordVerify=tempPasswordVerify,
-                               blankInputError=tempBlankInputError, passwordMismatchError=tempPasswordMismatchError)
+                               blankInputError=tempBlankInputError, passwordMismatchError=tempPasswordMismatchError, passwordReqError=tempPasswordReqError)
     else:
         # add to database class
         tempSalt = random_string()
