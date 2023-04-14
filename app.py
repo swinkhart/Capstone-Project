@@ -233,95 +233,94 @@ def flashcard_add():
         setNum = form.setNumber.data
         WordGIF = form.GIFWord.data
         FilePath = ClassNum + "_" + str(setNum) + "_" + WordGIF
-        match int(ClassNum):
-            case 1:
-                check_one = False
-                sets = asl_1_units.query.with_entities(asl_1_units.unit_number).all()
-                for set in sets:
-                    if setNum == set.unit_number:
-                        check_one = True
-                if check_one == False:
-                    newSet = asl_1_units(unit_number = setNum)
-                    try:
-                        db.session.add(newSet)
-                        db.session.commit()
-                    except:
-                        return "error adding Set to database"
-                check_one = False
-                newFlashcard = asl_1_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
+        if int(ClassNum) == 1:
+            check_one = False
+            sets = asl_1_units.query.with_entities(asl_1_units.unit_number).all()
+            for set in sets:
+                if setNum == set.unit_number:
+                    check_one = True
+            if check_one == False:
+                newSet = asl_1_units(unit_number = setNum)
                 try:
-                    db.session.add(newFlashcard)
+                    db.session.add(newSet)
                     db.session.commit()
-                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
-                    return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
                 except:
-                    return "error adding Flashcard to database"
-            case 2:
-                check_two = False
-                sets = asl_2_units.query.with_entities(asl_2_units.unit_number).all()
-                for set in sets:
-                    if setNum == set.unit_number:
-                        check_two = True
-                if check_two == False:
-                    newSet = asl_2_units(unit_number = setNum)
-                    try:
-                        db.session.add(newSet)
-                        db.session.commit()
-                    except:
-                        return "error adding Set to database"
-                check_two = False
-                newFlashcard = asl_2_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
+                    return render_template("flashcard_error_set.html")
+            check_one = False
+            newFlashcard = asl_1_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
+            try:
+                db.session.add(newFlashcard)
+                db.session.commit()
+                file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
+                return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
+            except:
+                return render_template("flashcard_error_flashcard.html")
+        elif int(ClassNum) == 2:
+            check_two = False
+            sets = asl_2_units.query.with_entities(asl_2_units.unit_number).all()
+            for set in sets:
+                if setNum == set.unit_number:
+                    check_two = True
+            if check_two == False:
+                newSet = asl_2_units(unit_number = setNum)
                 try:
-                    db.session.add(newFlashcard)
+                    db.session.add(newSet)
                     db.session.commit()
-                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
-                    return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
                 except:
-                    return "error adding user to database"
-            case 3:
-                check_three = False
-                sets = asl_3_units.query.with_entities(asl_3_units.unit_number).all()
-                for set in sets:
-                    if setNum == set.unit_number:
-                        check_three = True
-                if check_three == False:
-                    newSet = asl_3_units(unit_number = setNum)
-                    try:
-                        db.session.add(newSet)
-                        db.session.commit()
-                    except:
-                        return "error adding Set to database"
-                check_three = False
-                newFlashcard = asl_3_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
+                    return render_template("flashcard_error_set.html")
+            check_two = False
+            newFlashcard = asl_2_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
+            try:
+                db.session.add(newFlashcard)
+                db.session.commit()
+                file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
+                return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
+            except:
+                return render_template("flashcard_error_flashcard.html")
+        elif int(ClassNum) == 3:
+            check_three = False
+            sets = asl_3_units.query.with_entities(asl_3_units.unit_number).all()
+            for set in sets:
+                if setNum == set.unit_number:
+                    check_three = True
+            if check_three == False:
+                newSet = asl_3_units(unit_number = setNum)
                 try:
-                    db.session.add(newFlashcard)
+                    db.session.add(newSet)
                     db.session.commit()
-                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
-                    return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
                 except:
-                    return "error adding user to database"
-            case 4:
-                check_four = False
-                sets = asl_4_units.query.with_entities(asl_4_units.unit_number).all()
-                for set in sets:
-                    if setNum == set.unit_number:
-                        check_four = True
-                if check_four == False:
-                    newSet = asl_4_units(unit_number = setNum)
-                    try:
-                        db.session.add(newSet)
-                        db.session.commit()
-                    except:
-                        return "error adding Set to database"
-                check_four = False
-                newFlashcard = asl_4_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
+                    return render_template("flashcard_error_set.html")
+            check_three = False
+            newFlashcard = asl_3_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
+            try:
+                db.session.add(newFlashcard)
+                db.session.commit()
+                file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
+                return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
+            except:
+                return render_template("flashcard_error_flashcard.html")
+        elif int(ClassNum) == 4:
+            check_four = False
+            sets = asl_4_units.query.with_entities(asl_4_units.unit_number).all()
+            for set in sets:
+                if setNum == set.unit_number:
+                    check_four = True
+            if check_four == False:
+                newSet = asl_4_units(unit_number = setNum)
                 try:
-                    db.session.add(newFlashcard)
+                    db.session.add(newSet)
                     db.session.commit()
-                    file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
-                    return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
                 except:
-                    return "error adding user to database"
+                    return render_template("flashcard_error_set.html")
+            check_four = False
+            newFlashcard = asl_4_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
+            try:
+                db.session.add(newFlashcard)
+                db.session.commit()
+                file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
+                return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
+            except:
+                return render_template("flashcard_error_flashcard.html")
     return render_template("flashcard_add.html", form=form)
 
 @app.route('/flashcard_added', methods=["GET", "POST"])
