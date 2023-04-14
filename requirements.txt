@@ -4,3 +4,4 @@ pymysql
 werkzeug
 WTForms
 Flask-WTF
+mod_wsgi
