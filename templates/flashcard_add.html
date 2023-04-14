@@ -1,4 +1,9 @@
-{% extends 'navbarLoggedIn.html' %}
+{% if session["isTeacher"] %}
+    {% extends 'navbarLoggedInTeacher.html' %}
+{% else %}
+    {% extends 'navbarLoggedIn.html' %}
+{% endif %}
+
 {% block content %}
 <p><h1 align="center" class="p-3">Create New Flashcard</h1></p>
     <form method="post" enctype="multipart/form-data">
