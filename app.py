@@ -353,7 +353,7 @@ def flashcard_deleted(gifPath):
         db.session.delete(card)
         db.session.commit()
     except:
-        return "error deleting flashcard from database"
+        return render_template("flashcard_delete_error.html")
     
     checkUnit = None
     if classAndWord[0] == "1":
@@ -364,7 +364,7 @@ def flashcard_deleted(gifPath):
                 db.session.delete(unit)
                 db.session.commit()
             except:
-                return "error deleting unit number from unit table"
+                return render_template("unit_delete_error.html")
     elif classAndWord[0] == "2":
         checkUnit = asl_2_set.query.filter(asl_2_set.unit_number == classAndWord[1]).count()
         if checkUnit == 0:
@@ -373,7 +373,7 @@ def flashcard_deleted(gifPath):
                 db.session.delete(unit)
                 db.session.commit()
             except:
-                return "error deleting unit number from unit table"
+                return render_template("unit_delete_error.html")
     elif classAndWord[0] == "3":
         checkUnit = asl_3_set.query.filter(asl_3_set.unit_number == classAndWord[1]).count()
         if checkUnit == 0:
@@ -382,7 +382,7 @@ def flashcard_deleted(gifPath):
                 db.session.delete(unit)
                 db.session.commit()
             except:
-                return "error deleting unit number from unit table"
+                return render_template("unit_delete_error.html")
     elif classAndWord[0] == "4":
         checkUnit = asl_4_set.query.filter(asl_4_set.unit_number == classAndWord[1]).count()
         if checkUnit == 0:
@@ -391,7 +391,7 @@ def flashcard_deleted(gifPath):
                 db.session.delete(unit)
                 db.session.commit()
             except:
-                return "error deleting unit number from unit table"
+                return render_template("unit_delete_error.html")
 
     return render_template("flashcard_deleted.html"), {"Refresh": "1; url=/flashcard_delete"}
 
