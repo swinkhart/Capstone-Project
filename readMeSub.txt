@@ -6,3 +6,4 @@ Currently the flask app is set up to interface with a maria db database however 
 Currently hosting is setup using a mod_wsgi server hence the wsgi.py file, this works by running the app.py on the wsgi server,
 and then using a reverse proxy in the appache ssl.conf config file to redirect all requests to localhost:8000. We did this because flask 
 does not like to play nicely with reverse proxy.
+both the apache server and the mod_wsgi server have been setup to allow post requests of 30000000 bytes or 30 mega bytes since we are transfering GIF's
