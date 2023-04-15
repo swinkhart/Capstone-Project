@@ -14,6 +14,10 @@ import os
 
 app = Flask(__name__)
 app.secret_key = "test"
+#this line connects the flask app to the database, currently it is set up to use maria db.
+#user1 is a generic user that was created to allow access from an IP address through port 3306
+#testpwd is the password for the user access and capstone5.cs.kent.edu is the VM addess
+#/main is the database it is looking for
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://user1:testpwd@capstone5.cs.kent.edu/main'
 db = SQLAlchemy(app)
 
@@ -49,7 +53,9 @@ def hasNum(inputString):
 def hasChar(inputString):
     return any(char.isalpha() for char in inputString)
 
-# database table models 
+#these are all models of the tables in the database, they have to match since they
+#are used by flask-sqlalchemy to make new entries and even tables in the db 
+#all the commands to make the tables in maria db are in table commands.txt
 class Login(db.Model):
     email = db.Column(db.String(200), primary_key=True)
     account_type = db.Column(db.Boolean, nullable=False)
@@ -245,7 +251,7 @@ def flashcard_add():
                     db.session.add(newSet)
                     db.session.commit()
                 except:
-                    return render_template("flashcard_error_set.html")
+                    return render_template("flashcard_error_set.html"), {"Refresh": "1; url=/flashcard_add"}
             check_one = False
             newFlashcard = asl_1_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
             try:
@@ -254,7 +260,7 @@ def flashcard_add():
                 file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
                 return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
             except:
-                return render_template("flashcard_error_flashcard.html")
+                return render_template("flashcard_error_flashcard.html"), {"Refresh": "1; url=/flashcard_add"}
         elif int(ClassNum) == 2:
             check_two = False
             sets = asl_2_units.query.with_entities(asl_2_units.unit_number).all()
@@ -267,7 +273,7 @@ def flashcard_add():
                     db.session.add(newSet)
                     db.session.commit()
                 except:
-                    return render_template("flashcard_error_set.html")
+                    return render_template("flashcard_error_set.html"), {"Refresh": "1; url=/flashcard_add"}
             check_two = False
             newFlashcard = asl_2_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
             try:
@@ -276,7 +282,7 @@ def flashcard_add():
                 file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
                 return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
             except:
-                return render_template("flashcard_error_flashcard.html")
+                return render_template("flashcard_error_flashcard.html"), {"Refresh": "1; url=/flashcard_add"}
         elif int(ClassNum) == 3:
             check_three = False
             sets = asl_3_units.query.with_entities(asl_3_units.unit_number).all()
@@ -289,7 +295,7 @@ def flashcard_add():
                     db.session.add(newSet)
                     db.session.commit()
                 except:
-                    return render_template("flashcard_error_set.html")
+                    return render_template("flashcard_error_set.html"), {"Refresh": "1; url=/flashcard_add"}
             check_three = False
             newFlashcard = asl_3_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
             try:
@@ -298,7 +304,7 @@ def flashcard_add():
                 file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
                 return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
             except:
-                return render_template("flashcard_error_flashcard.html")
+                return render_template("flashcard_error_flashcard.html"), {"Refresh": "1; url=/flashcard_add"}
         elif int(ClassNum) == 4:
             check_four = False
             sets = asl_4_units.query.with_entities(asl_4_units.unit_number).all()
@@ -311,7 +317,7 @@ def flashcard_add():
                     db.session.add(newSet)
                     db.session.commit()
                 except:
-                    return render_template("flashcard_error_set.html")
+                    return render_template("flashcard_error_set.html"), {"Refresh": "1; url=/flashcard_add"}
             check_four = False
             newFlashcard = asl_4_set(word = WordGIF, unit_number = setNum, gif_path = FilePath)
             try:
@@ -320,7 +326,7 @@ def flashcard_add():
                 file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
                 return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
             except:
-                return render_template("flashcard_error_flashcard.html")
+                return render_template("flashcard_error_flashcard.html"), {"Refresh": "1; url=/flashcard_add"}
     return render_template("flashcard_add.html", form=form)
 
 @app.route('/flashcard_added', methods=["GET", "POST"])
@@ -353,7 +359,7 @@ def flashcard_deleted(gifPath):
         db.session.delete(card)
         db.session.commit()
     except:
-        return render_template("flashcard_delete_error.html")
+        return render_template("flashcard_delete_error.html"), {"Refresh": "1; url=/flashcard_delete"}
     
     checkUnit = None
     if classAndWord[0] == "1":
@@ -364,7 +370,7 @@ def flashcard_deleted(gifPath):
                 db.session.delete(unit)
                 db.session.commit()
             except:
-                return render_template("unit_delete_error.html")
+                return render_template("unit_delete_error.html"), {"Refresh": "1; url=/flashcard_delete"}
     elif classAndWord[0] == "2":
         checkUnit = asl_2_set.query.filter(asl_2_set.unit_number == classAndWord[1]).count()
         if checkUnit == 0:
@@ -373,7 +379,7 @@ def flashcard_deleted(gifPath):
                 db.session.delete(unit)
                 db.session.commit()
             except:
-                return render_template("unit_delete_error.html")
+                return render_template("unit_delete_error.html"), {"Refresh": "1; url=/flashcard_delete"}
     elif classAndWord[0] == "3":
         checkUnit = asl_3_set.query.filter(asl_3_set.unit_number == classAndWord[1]).count()
         if checkUnit == 0:
@@ -382,7 +388,7 @@ def flashcard_deleted(gifPath):
                 db.session.delete(unit)
                 db.session.commit()
             except:
-                return render_template("unit_delete_error.html")
+                return render_template("unit_delete_error.html"), {"Refresh": "1; url=/flashcard_delete"}
     elif classAndWord[0] == "4":
         checkUnit = asl_4_set.query.filter(asl_4_set.unit_number == classAndWord[1]).count()
         if checkUnit == 0:
@@ -391,7 +397,6 @@ def flashcard_deleted(gifPath):
                 db.session.delete(unit)
                 db.session.commit()
             except:
-                return render_template("unit_delete_error.html")
+                return render_template("unit_delete_error.html"), {"Refresh": "1; url=/flashcard_delete"}
 
     return render_template("flashcard_deleted.html"), {"Refresh": "1; url=/flashcard_delete"}
-
