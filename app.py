@@ -14,15 +14,18 @@ import os
 
 app = Flask(__name__)
 app.secret_key = "test"
-#this line connects the flask app to the database, currently it is set up to use maria db.
-#user1 is a generic user that was created to allow access from an IP address through port 3306
-#testpwd is the password for the user access and capstone5.cs.kent.edu is the VM addess
-#/main is the database it is looking for
+# this line connects the flask app to the database, currently it is set up to use maria db.
+# user1 is a generic user that was created to allow access from an IP address through port 3306
+# testpwd is the password for the user access and capstone5.cs.kent.edu is the VM addess
+# /main is the database it is looking for
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://user1:testpwd@capstone5.cs.kent.edu/main'
 db = SQLAlchemy(app)
 
+# static folder where all ASL GIFs are stored
 app.config['UPLOAD_FOLDER'] = 'static/images'
 
+
+# form template for create flashcard page
 class UploadFileForm(FlaskForm):
     ASLClass = SelectField('ASLClass', validators=[InputRequired()], choices = [(1, "ASL 1"), (2, "ASL 2"), (3, "ASL 3"), (4, "ASL 4")])
     setNumber= IntegerField('SetNum', validators=[InputRequired(), DataRequired(), NumberRange(min=1)])
@@ -30,6 +33,7 @@ class UploadFileForm(FlaskForm):
     file = FileField('image', validators=[FileRequired(), FileAllowed(['gif'], 'GIFs only!')])
     submit = SubmitField("Upload File")
 
+# password hashing functions
 def hash_password(password):
     word = password
     password_bytes = word.encode('utf-8')
@@ -44,6 +48,7 @@ def random_string():
     result = ''.join(choices)
     return result
 
+# validation functions for password field on signup form
 def hasSpace(inputString):
     return any(char.isspace() for char in inputString)
 
@@ -53,15 +58,19 @@ def hasNum(inputString):
 def hasChar(inputString):
     return any(char.isalpha() for char in inputString)
 
-#these are all models of the tables in the database, they have to match since they
-#are used by flask-sqlalchemy to make new entries and even tables in the db 
-#all the commands to make the tables in maria db are in table commands.txt
+
+# these are all models of the tables in the database, they have to match since they
+# are used by flask-sqlalchemy to make new entries and even tables in the db 
+# all the commands to make the tables in maria db are in table commands.txt
+
+# Login table is used to store usernames and passwords
 class Login(db.Model):
     email = db.Column(db.String(200), primary_key=True)
     account_type = db.Column(db.Boolean, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     salt = db.Column(db.String(25), nullable=False)
 
+# all asl_unit tables provide easy access to unit numbers for classes
 class asl_1_units(db.Model):
     unit_number = db.Column(db.Integer, primary_key=True)
 
@@ -74,6 +83,8 @@ class asl_3_units(db.Model):
 class asl_4_units(db.Model):
     unit_number = db.Column(db.Integer, primary_key=True)
 
+# all asl_set tables store the actual flashcard word and unit number for a given class
+# a GIF path is stored in the tables instead of the actual GIF to improve efficiency
 class asl_1_set(db.Model):
     word = db.Column(db.String(50), primary_key=True)
     unit_number = db.Column(db.Integer, db.ForeignKey('asl_1_units.unit_number'))
@@ -94,8 +105,10 @@ class asl_4_set(db.Model):
     unit_number = db.Column(db.Integer, db.ForeignKey('asl_4_units.unit_number'))
     gif_path = db.Column(db.String(100), nullable=False)
 
-# website routes
 
+# these are all the routes for the website
+
+# '/' is the index page (home page)
 @app.route('/', methods=["GET", "POST"])
 def index():
     
@@ -112,6 +125,8 @@ def login():
         email = request.form.get("email")
         password = request.form.get("password")
         time.sleep(1)
+
+        # login queries all records from the database and loops through in an attempt to find matching credentials
         infoRecords = Login.query.with_entities(Login.email, Login.password, Login.account_type, Login.salt).all()
         for infoRecord in infoRecords:
             if (email == infoRecord.email) and (hash_password(password + (infoRecord.salt)) == infoRecord.password):
@@ -129,7 +144,8 @@ def login():
         return render_template("login.html", incorrectLoginInfo=tempIncorrectLoginInfo)
     else:
         return render_template("login.html")
-    
+
+# logout removes the session variables for the currently logged in user    
 @app.route('/logout')
 def logout():
     session.pop("userEmail", None)
@@ -140,6 +156,7 @@ def logout():
 def signup():
     return render_template("signup.html")
 
+# signup response recieves input data from signup form, validates data (or displays error messages), and adds new users to the database
 @app.route('/signupResponse', methods=["POST"])
 def signupResponse():
     tempClassNumber = request.form.get("classNumber")
@@ -150,6 +167,7 @@ def signupResponse():
     tempPasswordMismatchError = ""
     tempPasswordReqError = ""
 
+    # validation checking
     if not tempClassNumber or not tempEmail or not tempPassword or not tempPasswordVerify:
         tempBlankInputError = "please fill in all fields"
     
@@ -165,6 +183,7 @@ def signupResponse():
     if not (hasChar(tempPassword) and hasNum(tempPassword)):
         tempPasswordReqError = "password must have at least a letter and a number"
 
+    # if an error is present, reroute back to the signup page and display error
     if tempBlankInputError or tempPasswordMismatchError or tempPasswordReqError:
         return render_template("signup.html", classNumber=tempClassNumber, email=tempEmail, password=tempPassword, passwordVerify=tempPasswordVerify,
                                blankInputError=tempBlankInputError, passwordMismatchError=tempPasswordMismatchError, passwordReqError=tempPasswordReqError)
@@ -175,6 +194,7 @@ def signupResponse():
         newUser = Login(email=tempEmail, account_type=0, password=tempPassword, salt=tempSalt)
 
         # push and commit to database
+        # if problem commiting to database, return specified error
         try:
             db.session.add(newUser)
             db.session.commit()
@@ -192,10 +212,14 @@ def Classes():
 def Units():
     return render_template("Units.html")
 
+# displays all available ASL classes
 @app.route('/flashcard')
 def flashcard():
     return render_template("classes.html")
 
+# displays all unit numbers for specified ASL class (provided in the URL)
+# stores class specifier in class number session variable
+# queries unit table for all unit numbers in the class
 @app.route('/flashcard_units/<class_number>')
 def flashcard_units(class_number):
     if class_number == "asl_1_units":
@@ -215,6 +239,8 @@ def flashcard_units(class_number):
         tempSets = asl_4_units.query.with_entities(asl_4_units.unit_number).all()
         return render_template("flashcard_units.html", sets=tempSets)
 
+# displays all flashcards for a unit number (provided in the URL) within an ASL class
+# queries set table to retrieve all flashcard data matching a unit number (within a specific class)
 @app.route('/flashcard_cards/<unit_number>')
 def flashcard_cards(unit_number):
     if session["class_number"] == "asl_1_units":
@@ -230,6 +256,7 @@ def flashcard_cards(unit_number):
         tempCards = asl_4_set.query.filter(asl_4_set.unit_number == unit_number).all()
         return render_template("flashcard_cards.html", cards=tempCards)
 
+# saves GIF to folder and adds flashcards to database
 @app.route('/flashcard_add', methods=["GET", "POST"])
 def flashcard_add():
     form = UploadFileForm()
@@ -239,8 +266,12 @@ def flashcard_add():
         setNum = form.setNumber.data
         WordGIF = form.GIFWord.data
         FilePath = ClassNum + "_" + str(setNum) + "_" + WordGIF
+        
+        # checking class numbers to see which table to add to
         if int(ClassNum) == 1:
             check_one = False
+
+            # checking to see if unit number is present (adds if not already present)
             sets = asl_1_units.query.with_entities(asl_1_units.unit_number).all()
             for set in sets:
                 if setNum == set.unit_number:
@@ -257,12 +288,18 @@ def flashcard_add():
             try:
                 db.session.add(newFlashcard)
                 db.session.commit()
+
+                # saving GIF to the folder (stored on the server)
                 file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
                 return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
             except:
                 return render_template("flashcard_error_flashcard.html"), {"Refresh": "1; url=/flashcard_add"}
+        
+        # checking class numbers to see which table to add to
         elif int(ClassNum) == 2:
             check_two = False
+
+            # checking to see if unit number is present (adds if not already present)
             sets = asl_2_units.query.with_entities(asl_2_units.unit_number).all()
             for set in sets:
                 if setNum == set.unit_number:
@@ -279,12 +316,18 @@ def flashcard_add():
             try:
                 db.session.add(newFlashcard)
                 db.session.commit()
+
+                # saving GIF to the folder (stored on the server)
                 file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
                 return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
             except:
                 return render_template("flashcard_error_flashcard.html"), {"Refresh": "1; url=/flashcard_add"}
+        
+        # checking class numbers to see which table to add to
         elif int(ClassNum) == 3:
             check_three = False
+
+            # checking to see if unit number is present (adds if not already present)
             sets = asl_3_units.query.with_entities(asl_3_units.unit_number).all()
             for set in sets:
                 if setNum == set.unit_number:
@@ -301,12 +344,18 @@ def flashcard_add():
             try:
                 db.session.add(newFlashcard)
                 db.session.commit()
+
+                # saving GIF to the folder (stored on the server)
                 file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
                 return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
             except:
                 return render_template("flashcard_error_flashcard.html"), {"Refresh": "1; url=/flashcard_add"}
+        
+        # checking class numbers to see which table to add to
         elif int(ClassNum) == 4:
             check_four = False
+
+            # checking to see if unit number is present (adds if not already present)
             sets = asl_4_units.query.with_entities(asl_4_units.unit_number).all()
             for set in sets:
                 if setNum == set.unit_number:
@@ -323,6 +372,8 @@ def flashcard_add():
             try:
                 db.session.add(newFlashcard)
                 db.session.commit()
+
+                # saving GIF to the folder (stored on the server)
                 file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(FilePath)))
                 return render_template("flashcard_added.html"), {"Refresh": "1; url=/flashcard_add"}
             except:
@@ -333,6 +384,7 @@ def flashcard_add():
 def flashcard_added():
     return render_template("flashcard_added.html")
 
+# queries and lists all flashcards for all classes
 @app.route('/flashcard_delete', methods=["GET", "POST"])
 def flashcard_delete():
     tempASL1 = asl_1_set.query.with_entities(asl_1_set.word, asl_1_set.unit_number, asl_1_set.gif_path).all()
@@ -341,10 +393,14 @@ def flashcard_delete():
     tempASL4 = asl_4_set.query.with_entities(asl_4_set.word, asl_4_set.unit_number, asl_4_set.gif_path).all()
     return render_template("flashcard_delete.html", ASL1=tempASL1, ASL2=tempASL2, ASL3=tempASL3, ASL4=tempASL4)
 
+# GIF path passed in URL and checked to see which file to remove from the folder
+# also removes accompanying record from the database
 @app.route('/flashcard_deleted/<gifPath>', methods=["GET", "POST"])
 def flashcard_deleted(gifPath):
     classAndWord = gifPath.split("_")
     card = None
+
+    # checking class number
     if classAndWord[0] == "1":
         card = asl_1_set.query.get_or_404(classAndWord[2])
     elif classAndWord[0] == "2":
@@ -354,6 +410,8 @@ def flashcard_deleted(gifPath):
     elif classAndWord[0] == "4":
         card = asl_4_set.query.get_or_404(classAndWord[2])
     
+    # try removing the file from the folder and deleting the record for the specified flashcard
+    # redirect to error page if not successful
     try:
         os.remove(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(gifPath)))
         db.session.delete(card)
@@ -361,6 +419,9 @@ def flashcard_deleted(gifPath):
     except:
         return render_template("flashcard_delete_error.html"), {"Refresh": "1; url=/flashcard_delete"}
     
+    # once a flashcard has been removed, the system must check to see if there are any flashcards still present within that unit for the specified class
+    # first check class numbers, then query set tables to see number of records for that unit number is greater than 0
+    # if not greater than 0, remove unit number from units table
     checkUnit = None
     if classAndWord[0] == "1":
         checkUnit = asl_1_set.query.filter(asl_1_set.unit_number == classAndWord[1]).count()
@@ -399,4 +460,5 @@ def flashcard_deleted(gifPath):
             except:
                 return render_template("unit_delete_error.html"), {"Refresh": "1; url=/flashcard_delete"}
 
+    # return confirmation of successful deletion
     return render_template("flashcard_deleted.html"), {"Refresh": "1; url=/flashcard_delete"}

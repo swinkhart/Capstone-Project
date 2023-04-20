@@ -1,3 +1,4 @@
+<!--check if teacher is logged in or not and display appropriate navbar-->
 {% if session["isTeacher"] %}
     {% extends 'navbarLoggedInTeacher.html' %}
 {% else %}
@@ -5,6 +6,7 @@
 {% endif %}
 
 {% block content %}
+<!--displays all available units for a selected class-->
 <br>
 <div class="flex-center-elements">
     <h1>Available units for this class</h1>

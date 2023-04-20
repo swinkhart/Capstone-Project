@@ -1,3 +1,4 @@
+<!--check if teacher is logged in or not and display appropriate navbar-->
 {% if session["isTeacher"] %}
   {% extends 'navbarLoggedInTeacher.html' %}
 {% else %}
@@ -9,6 +10,7 @@
 <div class="flex-center-elements">
   <h1>All available classes</h1>
 </div>
+<!--display all available ASL classes-->
 <div class="flex-center-elements">
     <section class="pb-5 mb-5 pt-5">
         <div class="container">

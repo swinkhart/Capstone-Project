@@ -1,3 +1,4 @@
+<!--check if teacher is logged in or not and display appropriate navbar-->
 {% if session["isTeacher"] %}
     {% extends 'navbarLoggedInTeacher.html' %}
 {% else %}
@@ -5,33 +6,36 @@
 {% endif %}
 
 {% block content %}
-<p><h1 align="center" class="p-3">Create New Flashcard</h1></p>
-    <form method="post" enctype="multipart/form-data">
-      {{form.hidden_tag()}}
-      <div class="container">
-        <div class="row row-cols-1 row-cols-lg-2 g-4">
-        <div class="col mb-2">
-          <div>ASL Class:</div>
-          {{form.ASLClass(class="form-control")}}
+<!--display form for adding flashcards if teacher is logged in-->
+{% if session["isTeacher"] %}
+  <p><h1 align="center" class="p-3">Create New Flashcard</h1></p>
+      <form method="post" enctype="multipart/form-data">
+        {{form.hidden_tag()}}
+        <div class="container">
+          <div class="row row-cols-1 row-cols-lg-2 g-4">
+          <div class="col mb-2">
+            <div>ASL Class:</div>
+            {{form.ASLClass(class="form-control")}}
+          </div>
+          <div class="col mb-2">
+            <div>Unit Number:</div>
+            {{form.setNumber(class="form-control")}}
+          </div>
+          <div class="col mb-2">
+            <div>Word:</div>
+            {{form.GIFWord(class="form-control")}}
+          </div>
+          <div class="col mb-2">
+            <div>GIF:</div>
+            {{form.file(class="form-control")}}
+            {% for error in form.file.errors %}
+            <div class="text-warning-emphasis">{{ error }}</div>
+            {% endfor %}
+          </div>
+          </div>
+          {{form.submit(class="btn btn-warning button-customization mt-4 p-2")}}
         </div>
-        <div class="col mb-2">
-          <div>Unit Number:</div>
-          {{form.setNumber(class="form-control")}}
-        </div>
-        <div class="col mb-2">
-          <div>Word:</div>
-          {{form.GIFWord(class="form-control")}}
-        </div>
-        <div class="col mb-2">
-          <div>GIF:</div>
-          {{form.file(class="form-control")}}
-          {% for error in form.file.errors %}
-          <div class="text-warning-emphasis">{{ error }}</div>
-          {% endfor %}
-        </div>
-        </div>
-        {{form.submit(class="btn btn-warning button-customization mt-4 p-2")}}
-      </div>
-    </form>
-</div>
+      </form>
+  </div>
+{% endif %}
 {% endblock %}

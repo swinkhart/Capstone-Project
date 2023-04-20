@@ -1,3 +1,4 @@
+<!--check if teacher is logged in or not and display appropriate navbar-->
 {% if session["isTeacher"] %}
     {% extends 'navbarLoggedInTeacher.html' %}
 {% else %}

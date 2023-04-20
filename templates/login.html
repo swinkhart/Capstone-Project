@@ -1,5 +1,6 @@
 {% extends 'navbarNotLoggedIn.html' %}
 {% block content %}
+<!--display login form-->
 <br>
 <br>
 <div class="flex-center-elements">
@@ -20,6 +21,7 @@
     </form>
 </div>
 <br>
+<!--display error messages if present-->
 {% if incorrectLoginInfo %}
 <div class="flex-center-elements">
     <div class="flex-center-elements login-form-width alert alert-danger alert-dismissible fade show" role="alert">
