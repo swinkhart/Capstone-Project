@@ -42,6 +42,7 @@ def hash_password(password):
     word = sha256.hexdigest()
     return word
 
+# function to create a salt
 def random_string():
     chars=string.ascii_letters + string.digits
     choices = random.choices(chars, k=20)
@@ -129,7 +130,7 @@ def login():
         # login queries all records from the database and loops through in an attempt to find matching credentials
         infoRecords = Login.query.with_entities(Login.email, Login.password, Login.account_type, Login.salt).all()
         for infoRecord in infoRecords:
-            if (email == infoRecord.email) and (hash_password(password + (infoRecord.salt)) == infoRecord.password):
+            if (email == infoRecord.email) and (hash_password(password + (infoRecord.salt)) == infoRecord.password):  #You must has the pasword given with the stored salt to compare
                 session["userEmail"] = email
                 
                 if (infoRecord.account_type == 1):
@@ -189,8 +190,8 @@ def signupResponse():
                                blankInputError=tempBlankInputError, passwordMismatchError=tempPasswordMismatchError, passwordReqError=tempPasswordReqError)
     else:
         # add to database class
-        tempSalt = random_string()
-        tempPassword = hash_password(tempPassword + tempSalt)
+        tempSalt = random_string() # salt created
+        tempPassword = hash_password(tempPassword + tempSalt) # password + salt hash created
         newUser = Login(email=tempEmail, account_type=0, password=tempPassword, salt=tempSalt)
 
         # push and commit to database
