@@ -203,16 +203,6 @@ def signupResponse():
         except:
             return "error adding user to database"
 
-@app.route('/Classes')
-def Classes():
-    if "class_number" in session:
-        session.pop("class_number", None)
-    return render_template("Classes.html")
-
-@app.route('/Units')
-def Units():
-    return render_template("Units.html")
-
 # displays all available ASL classes
 @app.route('/flashcard')
 def flashcard():
