@@ -1,38 +1,47 @@
 <!--check if teacher is logged in or not and display appropriate navbar-->
-{% if session["isTeacher"] %}
-  {% extends 'navbarLoggedInTeacher.html' %}
+{% if "userEmail" in session %}
+    {% if session["isTeacher"] %}
+        {% extends 'navbarLoggedInTeacher.html' %}
+    {% else %}
+        {% extends 'navbarLoggedIn.html' %}
+    {% endif %}
 {% else %}
-  {% extends 'navbarLoggedIn.html' %}
+    {% extends 'navbarNotLoggedIn.html' %}
 {% endif %}
 
 {% block content %}
-<br>
-<div class="flex-center-elements">
-  <h1>All available classes</h1>
-</div>
-<!--display all available ASL classes-->
-<div class="flex-center-elements">
-    <section class="pb-5 mb-5 pt-5">
-        <div class="container">
-          <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
-            <div class="col">
-                <a type="button" class="btn btn-secondary btn-sq-responsive btn-lg px-5 py-3 col-12" 
-                data-bs-theme="dark" href="{{ url_for('flashcard_units', class_number='asl_1_units') }}">ASL 1</a>
-            </div>
-            <div class="col">
-              <a type="button" class="btn btn-secondary btn-sq-responsive px-5 py-3 btn-lg px-5 py-3 col-12" 
-              data-bs-theme="dark" href="{{ url_for('flashcard_units', class_number='asl_2_units') }}">ASL 2</a>
-            </div>
-            <div class="col">
-              <a type="button" class="btn btn-secondary btn-sq-responsive px-5 py-3 btn-lg px-5 py-3 col-12" 
-              data-bs-theme="dark" href="{{ url_for('flashcard_units', class_number='asl_3_units') }}">ASL 3</a>
-            </div>
-            <div class="col">
-              <a type="button" class="btn btn-secondary btn-sq-responsive px-5 py-3 btn-lg px-5 py-3 col-12" 
-              data-bs-theme="dark" href="{{ url_for('flashcard_units', class_number='asl_4_units') }}">ASL 4</a>
+{% if "userEmail" in session %}
+  <br>
+  <div class="flex-center-elements">
+    <h1>All available classes</h1>
+  </div>
+  <!--display all available ASL classes-->
+  <div class="flex-center-elements">
+      <section class="pb-5 mb-5 pt-5">
+          <div class="container">
+            <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
+              <div class="col">
+                  <a type="button" class="btn btn-secondary btn-sq-responsive btn-lg px-5 py-3 col-12" 
+                  data-bs-theme="dark" href="{{ url_for('flashcard_units', class_number='asl_1_units') }}">ASL 1</a>
+              </div>
+              <div class="col">
+                <a type="button" class="btn btn-secondary btn-sq-responsive px-5 py-3 btn-lg px-5 py-3 col-12" 
+                data-bs-theme="dark" href="{{ url_for('flashcard_units', class_number='asl_2_units') }}">ASL 2</a>
+              </div>
+              <div class="col">
+                <a type="button" class="btn btn-secondary btn-sq-responsive px-5 py-3 btn-lg px-5 py-3 col-12" 
+                data-bs-theme="dark" href="{{ url_for('flashcard_units', class_number='asl_3_units') }}">ASL 3</a>
+              </div>
+              <div class="col">
+                <a type="button" class="btn btn-secondary btn-sq-responsive px-5 py-3 btn-lg px-5 py-3 col-12" 
+                data-bs-theme="dark" href="{{ url_for('flashcard_units', class_number='asl_4_units') }}">ASL 4</a>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-</div>
+        </section>
+  </div>
+{% else %}
+  <p><h1 align="center">Not logged in</h1></p>
+  <p><h2 align="center">&#40please sign in with credentials first&#41</h2></p>
+{% endif %}
 {% endblock %}

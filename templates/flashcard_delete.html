@@ -1,8 +1,12 @@
 <!--check if teacher is logged in or not and display appropriate navbar-->
-{% if session["isTeacher"] %}
-    {% extends 'navbarLoggedInTeacher.html' %}
+{% if "userEmail" in session %}
+    {% if session["isTeacher"] %}
+        {% extends 'navbarLoggedInTeacher.html' %}
+    {% else %}
+        {% extends 'navbarLoggedIn.html' %}
+    {% endif %}
 {% else %}
-    {% extends 'navbarLoggedIn.html' %}
+    {% extends 'navbarNotLoggedIn.html' %}
 {% endif %}
 
 {% block content %}
@@ -95,5 +99,7 @@
           </div>
         </section>
   </div>
+{% else %}
+  <p><h1 align="center">You do not have permission to access this page</h1></p>
 {% endif %}
 {% endblock %}

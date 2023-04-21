@@ -1,28 +1,37 @@
 <!--check if teacher is logged in or not and display appropriate navbar-->
-{% if session["isTeacher"] %}
-    {% extends 'navbarLoggedInTeacher.html' %}
+{% if "userEmail" in session %}
+    {% if session["isTeacher"] %}
+        {% extends 'navbarLoggedInTeacher.html' %}
+    {% else %}
+        {% extends 'navbarLoggedIn.html' %}
+    {% endif %}
 {% else %}
-    {% extends 'navbarLoggedIn.html' %}
+    {% extends 'navbarNotLoggedIn.html' %}
 {% endif %}
 
 {% block content %}
-<!--displays all available units for a selected class-->
-<br>
-<div class="flex-center-elements">
-    <h1>Available units for this class</h1>
-</div>
-<div class="flex-center-elements">
-    <section class="pb-5 mb-5 pt-5">
-        <div class="container">
-          <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
-            {% for card in sets %}
-            <div class="col">
-                <a type="button" class="btn btn-secondary btn-sq-responsive btn-lg px-5 py-2" data-bs-theme="dark"
-                href="{{ url_for('flashcard_cards', unit_number=card.unit_number) }}">Unit number {{ card.unit_number }}</a>
+{% if "userEmail" in session %}
+  <!--displays all available units for a selected class-->
+  <br>
+  <div class="flex-center-elements">
+      <h1>Available units for this class</h1>
+  </div>
+  <div class="flex-center-elements">
+      <section class="pb-5 mb-5 pt-5">
+          <div class="container">
+            <div class="row text-center row-cols-1 row-cols-lg-2 g-4">
+              {% for card in sets %}
+              <div class="col">
+                  <a type="button" class="btn btn-secondary btn-sq-responsive btn-lg px-5 py-2" data-bs-theme="dark"
+                  href="{{ url_for('flashcard_cards', unit_number=card.unit_number) }}">Unit number {{ card.unit_number }}</a>
+              </div>
+              {% endfor %}
             </div>
-            {% endfor %}
           </div>
-        </div>
-      </section>
-</div>
+        </section>
+  </div>
+{% else %}
+  <p><h1 align="center">Not logged in</h1></p>
+  <p><h2 align="center">&#40please sign in with credentials first&#41</h2></p>
+{% endif %}
 {% endblock %}
